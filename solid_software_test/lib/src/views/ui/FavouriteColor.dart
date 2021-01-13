@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 
-class ColorsHistory extends StatefulWidget {
+class FavouriteColor extends StatefulWidget {
   @override
-  _ColorsHistory createState() => _ColorsHistory();
+  _FavouriteColor createState() => _FavouriteColor();
 }
 
-class _ColorsHistory extends State<ColorsHistory> {
+class _FavouriteColor extends State<FavouriteColor> {
   @override
   Widget build(BuildContext context) {
     return Container(
         child: Center(
           child: Text(
-            "You don't have any colors in history. Go to RandomColor screen and click on it",
+            "No favourite color selected",
             textAlign: TextAlign.center,
             style: new TextStyle(fontSize: 20.0,),
           ),
