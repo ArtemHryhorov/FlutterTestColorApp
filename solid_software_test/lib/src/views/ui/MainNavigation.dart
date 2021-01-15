@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:solid_software_test/src/data/ColorsHistoryModel.dart';
+import 'package:solid_software_test/src/data/FavouriteColorModel.dart';
 import 'package:solid_software_test/src/views/ui/ColorsHistory.dart';
 import 'package:solid_software_test/src/views/ui/FavouriteColor.dart';
 import 'package:solid_software_test/src/views/ui/RandomColor.dart';
@@ -11,6 +13,8 @@ class MainNavigation extends StatefulWidget {
 }
 
 class _MainNavigation extends State<MainNavigation> {
+  ColorsHistoryModel colorsHistoryModel = ColorsHistoryModel.instance;
+  FavouriteColorModel favouriteColorModel = FavouriteColorModel.instance;
   int currentIndex = 1;
   final List<Widget> viewsList = [
     ColorsHistory(),
@@ -23,10 +27,13 @@ class _MainNavigation extends State<MainNavigation> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Solid Software'),
+        actions: <Widget>[
+          generateCurrentBarIcon()
+        ],
       ),
       body: viewsList[currentIndex],
       bottomNavigationBar: BottomNavigationBar(
-        onTap: onTabTapped, // new
+        onTap: onScreenSelected, // new
         currentIndex: currentIndex,
         items: [
           BottomNavigationBarItem(icon: Icon(Icons.history), label: "History"),
@@ -37,9 +44,45 @@ class _MainNavigation extends State<MainNavigation> {
     );
   }
 
-  void onTabTapped(int index) {
+  void onScreenSelected(int index) {
     setState(() {
       currentIndex = index;
     });
+  }
+
+  IconButton generateCurrentBarIcon() {
+    if (currentIndex == 0) {
+      return IconButton(
+        icon: Icon(
+          Icons.delete_forever,
+          color: Colors.white,
+        ),
+        onPressed: () {
+          colorsHistoryModel.clearHistory();
+        },
+      );
+    } else if (currentIndex == 1) {
+      return IconButton(
+        icon: Icon(
+          Icons.favorite,
+          color: Colors.white,
+        ),
+        onPressed: () {
+          favouriteColorModel.addToFavourite(
+            colorsHistoryModel.getLast()
+          );
+        },
+      );
+    } else {
+      return IconButton(
+        icon: Icon(
+          Icons.clear,
+          color: Colors.white,
+        ),
+        onPressed: () {
+          favouriteColorModel.deleteFromFavourite();
+        },
+      );
+    }
   }
 }

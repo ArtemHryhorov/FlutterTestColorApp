@@ -20,14 +20,31 @@ class _RandomColorState extends State<RandomColor> {
             colorsHistoryModel.addColor(containerColor);
           });
         },
-        child: SizedBox.expand(
-          child: Container(
-            color: checkInitColor(),
-          ),
-        ));
+        child: Center(
+          child: createColorOrHint(),
+        )
+    );
   }
 
-  Color checkInitColor() {
+  Widget createColorOrHint() {
+    if (containerColor == null && colorsHistoryModel.getLast() == null) {
+      return Text(
+        "Tap here to start",
+        textAlign: TextAlign.center,
+        style: new TextStyle(
+          fontSize: 20.0,
+        ),
+      );
+    } else {
+      return SizedBox.expand(
+        child: Container(
+          color: getCurrentColor(),
+        ),
+      );
+    }
+  }
+
+  Color getCurrentColor() {
     if (containerColor == null) {
       if (colorsHistoryModel.getLast() == null) {
         return Colors.white;
