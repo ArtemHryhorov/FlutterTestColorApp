@@ -1,30 +1,34 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 class ColorsHistoryModel {
-  ColorsHistoryModel._privateConstructor();
+  ColorsHistoryModel._internal();
 
-  List<Color> colorsList = [];
+  static final ColorsHistoryModel _singleton = ColorsHistoryModel._internal();
 
-  static final ColorsHistoryModel instance =
-      ColorsHistoryModel._privateConstructor();
+  ValueNotifier<List<Color>> colorsNotifier = ValueNotifier<List<Color>>([]);
+  List<Color> _colorsList = [];
 
-  void addColor(Color newColor) {
-    colorsList.add(newColor);
-  }
-
-  Color getLast() {
-    if (colorsList.isEmpty) {
+  Future<Color> getLast() async {
+    if (_colorsList.isEmpty) {
       return null;
     } else {
-      return colorsList.last;
+      return _colorsList.last;
     }
   }
 
+  void addColor(Color newColor) {
+    _colorsList.add(newColor);
+    colorsNotifier.value = List.from(_colorsList);
+  }
+
   void clearHistory() {
-    colorsList.clear();
+    _colorsList.clear();
+    colorsNotifier.value = [];
   }
 
   factory ColorsHistoryModel() {
-    return instance;
+    return _singleton;
   }
 }

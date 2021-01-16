@@ -7,16 +7,14 @@ import 'package:solid_software_test/src/views/ui/RandomColor.dart';
 
 class MainNavigation extends StatefulWidget {
   @override
-  State<StatefulWidget> createState() {
-    return _MainNavigation();
-  }
+  State<StatefulWidget> createState() => _MainNavigation();
 }
 
 class _MainNavigation extends State<MainNavigation> {
-  ColorsHistoryModel colorsHistoryModel = ColorsHistoryModel.instance;
-  FavouriteColorModel favouriteColorModel = FavouriteColorModel.instance;
-  int currentIndex = 1;
-  final List<Widget> viewsList = [
+  ColorsHistoryModel _colorsHistoryModel = ColorsHistoryModel();
+  FavouriteColorModel _favouriteColorModel = FavouriteColorModel();
+  int _currentIndex = 1;
+  final List<Widget> _viewsList = [
     ColorsHistory(),
     RandomColor(),
     FavouriteColor()
@@ -26,15 +24,21 @@ class _MainNavigation extends State<MainNavigation> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Solid Software'),
+        title: Text("Solid Software"),
         actions: <Widget>[
-          generateCurrentBarIcon()
+          IconButton(
+            icon: Icon(
+              generateCurrentBarIcon(),
+              color: Colors.white,
+            ),
+            onPressed: () { onIconPressed(); },
+          )
         ],
       ),
-      body: viewsList[currentIndex],
+      body: _viewsList[_currentIndex],
       bottomNavigationBar: BottomNavigationBar(
         onTap: onScreenSelected, // new
-        currentIndex: currentIndex,
+        currentIndex: _currentIndex,
         items: [
           BottomNavigationBarItem(icon: Icon(Icons.history), label: "History"),
           BottomNavigationBarItem(icon: Icon(Icons.home), label: "Colors"),
@@ -46,43 +50,31 @@ class _MainNavigation extends State<MainNavigation> {
 
   void onScreenSelected(int index) {
     setState(() {
-      currentIndex = index;
+      _currentIndex = index;
     });
   }
 
-  IconButton generateCurrentBarIcon() {
-    if (currentIndex == 0) {
-      return IconButton(
-        icon: Icon(
-          Icons.delete_forever,
-          color: Colors.white,
-        ),
-        onPressed: () {
-          colorsHistoryModel.clearHistory();
-        },
-      );
-    } else if (currentIndex == 1) {
-      return IconButton(
-        icon: Icon(
-          Icons.favorite,
-          color: Colors.white,
-        ),
-        onPressed: () {
-          favouriteColorModel.addToFavourite(
-            colorsHistoryModel.getLast()
-          );
-        },
-      );
+  IconData generateCurrentBarIcon() {
+    if (_currentIndex == 0) {
+      return Icons.delete_forever;
+    } else if (_currentIndex == 1) {
+      return Icons.favorite;
     } else {
-      return IconButton(
-        icon: Icon(
-          Icons.clear,
-          color: Colors.white,
-        ),
-        onPressed: () {
-          favouriteColorModel.deleteFromFavourite();
-        },
-      );
+      return Icons.clear;
+    }
+  }
+
+  void onIconPressed() {
+    if (_currentIndex == 0) {
+      _colorsHistoryModel.clearHistory();
+    } else if (_currentIndex == 1) {
+      () async {
+        _favouriteColorModel.addToFavourite(
+            await _colorsHistoryModel.getLast()
+        );
+      }();
+    } else {
+      _favouriteColorModel.deleteFromFavourite();
     }
   }
 }

@@ -8,51 +8,38 @@ class RandomColor extends StatefulWidget {
 }
 
 class _RandomColorState extends State<RandomColor> {
-  ColorsHistoryModel colorsHistoryModel = ColorsHistoryModel.instance;
-  Color containerColor;
+  ColorsHistoryModel _colorsHistoryModel = ColorsHistoryModel();
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
         onTap: () {
-          setState(() {
-            containerColor = generateRandomColor();
-            colorsHistoryModel.addColor(containerColor);
-          });
+          _colorsHistoryModel.addColor(generateRandomColor());
         },
-        child: Center(
-          child: createColorOrHint(),
-        )
+        child: getColorOrHint()
     );
   }
 
-  Widget createColorOrHint() {
-    if (containerColor == null && colorsHistoryModel.getLast() == null) {
-      return Text(
-        "Tap here to start",
-        textAlign: TextAlign.center,
-        style: new TextStyle(
-          fontSize: 20.0,
-        ),
-      );
-    } else {
-      return SizedBox.expand(
-        child: Container(
-          color: getCurrentColor(),
-        ),
-      );
-    }
-  }
-
-  Color getCurrentColor() {
-    if (containerColor == null) {
-      if (colorsHistoryModel.getLast() == null) {
-        return Colors.white;
-      } else {
-        return colorsHistoryModel.getLast();
-      }
-    } else {
-      return containerColor;
-    }
+  Widget getColorOrHint() {
+    return ValueListenableBuilder<List<Color>>(
+        valueListenable: _colorsHistoryModel.colorsNotifier,
+        builder: (context, colors, widget) {
+          if (colors != null && colors.isNotEmpty) {
+            return Container(
+              color: colors.last ?? Colors.white
+            );
+          } else {
+            return Container(
+              color: Colors.transparent,
+              alignment: Alignment.center,
+              child: Text(
+                  "Hey there!",
+                  textAlign: TextAlign.center,
+                  style: new TextStyle(fontSize: 20.0)
+              ),
+            );
+          }
+        }
+    );
   }
 }

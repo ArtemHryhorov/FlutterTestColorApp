@@ -7,27 +7,29 @@ class FavouriteColor extends StatefulWidget {
 }
 
 class _FavouriteColor extends State<FavouriteColor> {
-  FavouriteColorModel favouriteColorModel = FavouriteColorModel.instance;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-        child: Center(
-            child: getFavouriteColor()
-        )
-    );
+    return ValueListenableBuilder<Color>(
+      valueListenable: FavouriteColorModel().favouriteNotifier,
+      builder: (context, value, widget) => getFavouriteColorOrHint(value)
+   );
   }
 
-  Widget getFavouriteColor() {
-    if (favouriteColorModel.color == null) {
-      return Text(
+  Widget getFavouriteColorOrHint(Color color) {
+    if (color == null) {
+      return Container(
+        color: Colors.transparent,
+        alignment: Alignment.center,
+        child: Text(
           "No favourite color selected",
           textAlign: TextAlign.center,
-          style: new TextStyle(fontSize: 20.0,)
+          style: new TextStyle(fontSize: 20.0)
+        )
       );
     } else {
       return Container(
-          color: favouriteColorModel.color
+        color: color
       );
     }
   }

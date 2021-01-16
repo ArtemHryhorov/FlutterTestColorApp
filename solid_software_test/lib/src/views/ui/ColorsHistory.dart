@@ -7,39 +7,38 @@ class ColorsHistory extends StatefulWidget {
 }
 
 class _ColorsHistory extends State<ColorsHistory> {
-  ColorsHistoryModel colorsHistoryModel = ColorsHistoryModel.instance;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-        child: Center(child: generateColorsContainerList())
+    return ValueListenableBuilder<List<Color>>(
+      valueListenable: ColorsHistoryModel().colorsNotifier,
+      builder: (context, value, widget) {
+          return Container(
+              child: Center(
+                  child: getColorsHistoryOrHint(value)
+              )
+          );
+      }
     );
   }
 
-  Widget generateColorsContainerList() {
-    List<Container> colorsContainerList = [];
-
-    for (
-      var index = colorsHistoryModel.colorsList.length - 1;
-      index >= 0;
-      index--
-    ) {
-      colorsContainerList.add(
-          Container(
+  Widget getColorsHistoryOrHint(List<Color> colors) {
+    if(colors != null && colors.isNotEmpty) {
+      return ListView.builder(
+        itemCount: colors.length,
+        itemBuilder: (context, index) {
+          return Container(
             height: 50,
-            color: colorsHistoryModel.colorsList[index],
-          )
+            color: colors[colors.length - index - 1],
+          );
+        },
       );
-    }
-
-    if (colorsContainerList.isEmpty) {
+    } else {
       return Text(
-        "You don't have any colors in history. Go to RandomColor screen and click on it",
+        "You don't have any colors in history. Go to Colors screen and click on it",
         textAlign: TextAlign.center,
         style: new TextStyle(fontSize: 20.0),
       );
-    } else {
-      return ListView(children: colorsContainerList);
     }
   }
 }

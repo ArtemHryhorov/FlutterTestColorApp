@@ -1,22 +1,28 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 class FavouriteColorModel {
-  FavouriteColorModel._privateConstructor();
+  FavouriteColorModel._internal();
 
-  Color color;
+  static final FavouriteColorModel _singleton = FavouriteColorModel._internal();
 
-  static final FavouriteColorModel instance =
-      FavouriteColorModel._privateConstructor();
+  ValueNotifier<Color> favouriteNotifier = ValueNotifier<Color>(null);
+  Color _color;
+
+  Future<Color> getFavourite() async => _color;
 
   void addToFavourite(Color favouriteColor) {
-    color = favouriteColor;
+    _color = favouriteColor;
+    favouriteNotifier.value = favouriteColor;
   }
 
   void deleteFromFavourite() {
-    color = null;
+    _color = null;
+    favouriteNotifier.value = null;
   }
 
   factory FavouriteColorModel() {
-    return instance;
+    return _singleton;
   }
 }
